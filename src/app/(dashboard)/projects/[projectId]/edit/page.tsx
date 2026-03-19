@@ -23,6 +23,7 @@ export default async function EditProjectPage({
   const project = await getProjectById(projectId)
   if (project == null) return notFound()
 
+  // PERMISSION:
   const user = await getCurrentUser()
   if (
     user == null ||

@@ -6,6 +6,7 @@ import { ProjectForm } from "@/components/project-form"
 import { getCurrentUser } from "@/lib/session"
 
 export default async function NewProjectPage() {
+  // PERMISSION:
   const user = await getCurrentUser()
   if (user?.role !== "admin") {
     return redirect("/")

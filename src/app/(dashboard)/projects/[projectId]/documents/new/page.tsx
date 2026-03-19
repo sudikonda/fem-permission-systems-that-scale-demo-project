@@ -14,6 +14,7 @@ export default async function NewDocumentPage({
   const project = await getProjectById(projectId)
   if (project == null) return notFound()
 
+  // PERMISSION:
   const user = await getCurrentUser()
   if (
     user == null ||
@@ -22,6 +23,7 @@ export default async function NewDocumentPage({
     return redirect("/")
   }
 
+  // PERMISSION:
   if (user.role !== "author" && user.role !== "admin") {
     return redirect("/")
   }

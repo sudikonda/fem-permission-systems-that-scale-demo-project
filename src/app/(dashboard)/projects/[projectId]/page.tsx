@@ -21,6 +21,7 @@ export default async function ProjectDocumentsPage({
   const { projectId } = await params
   const project = await getProjectById(projectId)
   if (project == null) return notFound()
+  // PERMISSION:
   const user = await getCurrentUser();
   console.log(user);
   if (user == null || (user.role !== "admin" && project.department != null && user.department != project.department)) {
@@ -66,6 +67,7 @@ export default async function ProjectDocumentsPage({
             <p className="text-muted-foreground mb-4">
               Create your first document in this project.
             </p>
+            {/* PERMISSION: */}
             {(user?.role === "author" || user?.role === "admin") && (
               <Button asChild>
                 <Link href={`/projects/${projectId}/documents/new`}>
