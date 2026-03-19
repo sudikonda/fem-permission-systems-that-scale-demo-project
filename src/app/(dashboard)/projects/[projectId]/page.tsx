@@ -23,8 +23,14 @@ export default async function ProjectDocumentsPage({
   if (project == null) return notFound()
   // FIX: Not checking if user has access to project
 
-  const documents = await getProjectDocuments(projectId)
-  const user = await getCurrentUser()
+  const user = await getCurrentUser();
+  console.log(user);
+  if (user == null || (user.role !== "admin" && project.department != null && user.department != project.department)) {
+    return redirect(`/`);
+  }
+
+  const documents = await getProjectDocuments(projectId);
+  // const user = await getCurrentUser()
 
   return (
     <div className="space-y-6">

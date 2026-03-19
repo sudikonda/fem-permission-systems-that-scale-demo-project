@@ -17,10 +17,15 @@ export default async function DocumentDetailPage({
   // FIX: Not checking permissions
   // FIX: Not checking if user has access to project
 
+  const user = await getCurrentUser();
+  if (user == null || (user.role !== "admin" && project.department != null && user.department != project.department)) {
+    return redirect(`/`);
+  }
+
   const document = await getDocumentWithUserInfo(documentId)
   if (document == null) return notFound()
 
-  const user = await getCurrentUser()
+  // const user = await getCurrentUser()
 
   return (
     <div className="space-y-6">
