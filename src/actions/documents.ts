@@ -1,13 +1,7 @@
 "use server"
 
-import {getCurrentUser} from "@/lib/session"
 import {redirect} from "next/navigation"
-import {documentSchema, type DocumentFormValues} from "../schemas/documents"
-import {
-    createDocument,
-    deleteDocument,
-    updateDocument,
-} from "@/dal/documents/mutations"
+import {type DocumentFormValues} from "../schemas/documents"
 import {tryFn} from "@/lib/helpers"
 import {createDocumentService, updateDocumentService, deleteDocumentService} from '@/services/document';
 
