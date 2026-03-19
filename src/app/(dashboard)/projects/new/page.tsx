@@ -1,10 +1,15 @@
 import Link from "next/link"
+import { redirect } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { ArrowLeftIcon } from "lucide-react"
 import { ProjectForm } from "@/components/project-form"
+import { getCurrentUser } from "@/lib/session"
 
 export default async function NewProjectPage() {
-  // FIX: Not checking permissions
+  const user = await getCurrentUser()
+  if (user?.role !== "admin") {
+    return redirect("/")
+  }
 
   return (
     <div className="space-y-6">

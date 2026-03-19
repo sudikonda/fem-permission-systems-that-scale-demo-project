@@ -7,8 +7,7 @@ import { eq } from "drizzle-orm"
 export async function createDocument(data: DocumentInsertData) {
   // PERMISSION:
   const user = await getCurrentUser()
-  // FIX: Missing viewer role check
-  if (user == null || user.role === "editor") {
+  if (user == null || user.role === "viewer" || user.role === "editor") {
     throw new AuthorizationError()
   }
 
