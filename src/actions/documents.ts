@@ -3,7 +3,7 @@
 import {redirect} from "next/navigation"
 import {type DocumentFormValues} from "../schemas/documents"
 import {tryFn} from "@/lib/helpers"
-import {createDocumentService, updateDocumentService, deleteDocumentService} from '@/services/document';
+import {createDocumentService, updateDocumentService, deleteDocumentService} from '@/services/documents';
 
 export async function createDocumentAction(
     projectId: string,

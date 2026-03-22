@@ -11,15 +11,17 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { PlusIcon, LockIcon, FileTextIcon } from "lucide-react"
 import { getStatusBadgeVariant } from "@/lib/helpers"
-import { getProjectById } from "@/dal/projects/queries"
-import { getProjectDocuments } from "@/dal/documents/queries"
+import { getProjectByIdService } from "@/services/projects"
+import { getProjectDocumentsService } from "@/services/documents"
 import { getCurrentUser } from "@/lib/session"
 
 export default async function ProjectDocumentsPage({
   params,
 }: PageProps<"/projects/[projectId]">) {
   const { projectId } = await params
-  const project = await getProjectById(projectId)
+
+  // Use service that handles auth
+  const project = await getProjectByIdService(projectId)
   if (project == null) return notFound()
   // PERMISSION:
   const user = await getCurrentUser();
@@ -28,8 +30,8 @@ export default async function ProjectDocumentsPage({
     return redirect(`/`);
   }
 
-  const documents = await getProjectDocuments(projectId);
-  // const user = await getCurrentUser()
+  // Only fetch documents the user is authorized to see
+  const documents = await getProjectDocumentsService(projectId)
 
   return (
     <div className="space-y-6">
@@ -41,13 +43,11 @@ export default async function ProjectDocumentsPage({
           )}
         </div>
         <div className="flex gap-2">
-          {/* PERMISSION: */}
           {user?.role === "admin" && (
             <Button asChild variant="outline">
               <Link href={`/projects/${projectId}/edit`}>Edit Project</Link>
             </Button>
           )}
-          {/* PERMISSION: */}
           {(user?.role === "author" || user?.role === "admin") && (
             <Button asChild>
               <Link href={`/projects/${projectId}/documents/new`}>
@@ -67,7 +67,6 @@ export default async function ProjectDocumentsPage({
             <p className="text-muted-foreground mb-4">
               Create your first document in this project.
             </p>
-            {/* PERMISSION: */}
             {(user?.role === "author" || user?.role === "admin") && (
               <Button asChild>
                 <Link href={`/projects/${projectId}/documents/new`}>

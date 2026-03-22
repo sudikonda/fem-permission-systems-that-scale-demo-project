@@ -7,8 +7,8 @@ import { ActionButton } from "@/components/ui/action-button"
 import { deleteDocumentAction } from "@/actions/documents"
 import { ArrowLeftIcon, LockIcon, PencilIcon } from "lucide-react"
 import { getStatusBadgeVariant } from "@/lib/helpers"
-import { getDocumentWithUserInfo } from "@/dal/documents/queries"
-import { getProjectById } from "@/dal/projects/queries"
+import { getDocumentWithUserInfoService } from "@/services/documents"
+import { getProjectByIdService } from "@/services/projects"
 import { getCurrentUser } from "@/lib/session"
 
 export default async function DocumentDetailPage({
@@ -16,19 +16,14 @@ export default async function DocumentDetailPage({
 }: PageProps<"/projects/[projectId]/documents/[documentId]">) {
   const { projectId, documentId } = await params
 
-  const project = await getProjectById(projectId)
+  // Use services that handle auth
+  const project = await getProjectByIdService(projectId)
   if (project == null) return notFound()
 
-  // PERMISSION:
-  const user = await getCurrentUser();
-  if (user == null || (user.role !== "admin" && project.department != null && user.department != project.department)) {
-    return redirect(`/`);
-  }
-
-  const document = await getDocumentWithUserInfo(documentId)
+  const document = await getDocumentWithUserInfoService(documentId)
   if (document == null) return notFound()
 
-  // const user = await getCurrentUser()
+  const user = await getCurrentUser()
 
   return (
     <div className="space-y-6">
@@ -54,7 +49,6 @@ export default async function DocumentDetailPage({
           </div>
         </div>
         <div className="flex gap-2">
-          {/* PERMISSION: */}
           {(user?.role === "author" ||
             user?.role === "editor" ||
             user?.role === "admin") && (
@@ -67,7 +61,6 @@ export default async function DocumentDetailPage({
               </Link>
             </Button>
           )}
-          {/* PERMISSION: */}
           {user?.role === "admin" && (
             <ActionButton
               variant="destructive"

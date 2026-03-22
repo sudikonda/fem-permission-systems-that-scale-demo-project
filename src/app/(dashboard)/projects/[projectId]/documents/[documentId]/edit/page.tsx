@@ -2,8 +2,8 @@ import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { ArrowLeftIcon } from "lucide-react"
-import { getProjectById } from "@/dal/projects/queries"
-import { getDocumentById } from "@/dal/documents/queries"
+import { getProjectByIdService } from "@/services/projects"
+import { getDocumentByIdService } from "@/services/documents"
 import { DocumentForm } from "@/components/document-form"
 import { getCurrentUser } from "@/lib/session"
 
@@ -12,13 +12,13 @@ export default async function EditDocumentPage({
 }: PageProps<"/projects/[projectId]/documents/[documentId]/edit">) {
   const { projectId, documentId } = await params
 
-  const document = await getDocumentById(documentId)
+  // Use services that handle auth
+  const document = await getDocumentByIdService(documentId)
   if (document == null) return notFound()
 
-  const project = await getProjectById(projectId)
+  const project = await getProjectByIdService(projectId)
   if (project == null) return notFound()
 
-  // PERMISSION:
   const user = await getCurrentUser()
   if (
     user == null ||
@@ -27,8 +27,8 @@ export default async function EditDocumentPage({
     return redirect("/")
   }
 
-  // PERMISSION:
-  if (user.role !== "author" && user.role !== "editor" && user.role !== "admin") {
+  // Check edit permission for UI only (service handles actual auth)
+  if (user?.role === "viewer") {
     return redirect("/")
   }
 

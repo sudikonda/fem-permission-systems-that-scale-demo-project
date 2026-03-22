@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { getProjectById } from "@/dal/projects/queries"
+import { getProjectByIdService } from "@/services/projects"
 import { ProjectForm } from "@/components/project-form"
 import { getCurrentUser } from "@/lib/session"
 
@@ -20,15 +20,14 @@ export default async function EditProjectPage({
 }: PageProps<"/projects/[projectId]/edit">) {
   const { projectId } = await params
 
-  const project = await getProjectById(projectId)
+  // Use service that handles auth
+  const project = await getProjectByIdService(projectId)
   if (project == null) return notFound()
 
-  // PERMISSION:
   const user = await getCurrentUser()
-  if (
-    user == null ||
-    user.role !== "admin"
-  ) {
+
+  // Check admin permission for UI only (service handles actual auth)
+  if (user?.role !== "admin") {
     return redirect("/")
   }
 
